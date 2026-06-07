@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">우리반 몰입 스터디</string>
+    <!-- 웹앱(배포) 주소. 새 버전으로 재배포하면 이 값만 바꾸면 됩니다. -->
+    <string name="app_url">https://script.google.com/macros/s/AKfycbxevYq5Of1Lwq6j3faDsvIfyfi_Yh9qtoCZXJ0ZTd7UGjyGJ1vgvVNC8VVl2h2kRaRG/exec</string>
+</resources>
