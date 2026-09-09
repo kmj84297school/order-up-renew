@@ -1,0 +1,29 @@
+# Unreal binary assets. Git LFS keeps the repository usable once real meshes,
+# textures and levels land in Phase 9 -- without it a few texture revisions
+# will bloat history past the point of cloning comfortably.
+#
+# Run `git lfs install` once per machine before adding any of these.
+*.uasset filter=lfs diff=lfs merge=lfs -text
+*.umap   filter=lfs diff=lfs merge=lfs -text
+*.upk    filter=lfs diff=lfs merge=lfs -text
+*.udk    filter=lfs diff=lfs merge=lfs -text
+
+# Reference imagery supplied by the user.
+*.png  filter=lfs diff=lfs merge=lfs -text
+*.jpg  filter=lfs diff=lfs merge=lfs -text
+*.jpeg filter=lfs diff=lfs merge=lfs -text
+*.webp filter=lfs diff=lfs merge=lfs -text
+*.mp4  filter=lfs diff=lfs merge=lfs -text
+
+# Audio.
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.ogg filter=lfs diff=lfs merge=lfs -text
+
+# Text formats that must stay diffable.
+*.cpp text
+*.h   text
+*.cs  text
+*.ini text
+*.md  text
+*.py  text
+*.uproject text

@@ -1,0 +1,25 @@
+# Unreal Engine generated / build output
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+.vscode/
+.idea/
+*.VC.db
+*.opensdf
+*.opendb
+*.sdf
+*.sln
+*.suo
+*.xcodeproj
+*.xcworkspace
+
+# Unreal crash / log output
+*.log
+Saved/Crashes/
+
+# OS noise
+.DS_Store
+Thumbs.db

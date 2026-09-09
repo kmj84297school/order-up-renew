@@ -1,0 +1,8 @@
+Levels live here.
+
+L_FarmBlockout.umap is not in the repository: a .umap is a binary asset and
+cannot be authored without the Unreal Editor, which was unavailable when this
+project was created. Config/DefaultEngine.ini already points GameDefaultMap
+and EditorStartupMap at /Game/Levels/L_FarmBlockout.
+
+Create it with Tools/generate_bootstrap_level.py. See KNOWN_ISSUES.md KI-02.
