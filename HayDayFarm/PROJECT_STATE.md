@@ -150,11 +150,17 @@ placeholder, see KI-10.
 
 ## Automation
 
-A daily Routine (`trig_01XewNh9VVXigHdSSoqDqhkh`, cron `0 17 * * *` UTC =
-**02:00 KST**) starts a fresh session that reads these four files and continues
-NEXT_TASK.md. Those sessions run in the same headless Linux container and
-**cannot build or test in the editor** — that constraint is stated in the
-Routine's own prompt.
+**Currently DISABLED.** Development is being handed to another coding agent
+(see `Docs/CODEX_HANDOFF.md`), and two agents pushing to the same branch on a
+schedule would collide.
+
+The Routine still exists and can be re-enabled without rebuilding it:
+`trig_01XewNh9VVXigHdSSoqDqhkh`, cron `0 17 * * *` UTC = **02:00 KST**,
+fresh session per firing, reads these four files and continues NEXT_TASK.md.
+
+If it is re-enabled, note that those sessions run in a headless Linux
+container and **cannot build or test in the editor** — that constraint is
+stated in the Routine's own prompt.
 
 ## Recent major changes
 
@@ -169,3 +175,5 @@ Routine's own prompt.
 - 2026-09-09: Added `Docs/CODEX_HANDOFF.md`, a paste-ready prompt for handing
   the project to another coding agent. **Keep it current on handoff** — its
   "Current state" and "Your task" sections go stale fastest.
+- 2026-09-09: Disabled the daily Routine to avoid two agents pushing to the
+  same branch. See "Automation" above for how to turn it back on.
