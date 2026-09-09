@@ -163,3 +163,6 @@ Routine's own prompt.
   default branch.
 - 2026-09-09: Phase 4 interaction framework added; validator extended for
   UINTERFACE and BlueprintNativeEvent and re-fault-tested (8/8).
+- 2026-09-09: Decided the project stays in `order-up-renew` rather than
+  waiting on a new repository (KI-09 closed). Added `Tools/Setup.ps1` and
+  `RUNNING.md` so the first build is one command.

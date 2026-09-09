@@ -146,6 +146,25 @@ something real to do.
 
 ---
 
+## KI-12 — `Tools/Setup.ps1` is unverified
+
+**Status:** OPEN — resolve on first run
+**Severity:** Low (RUNNING.md section 3 is the manual equivalent)
+**File:** `Tools/Setup.ps1`
+
+Automates locate-engine → validate → build → generate level → launch. Written
+without a Windows machine or an Unreal installation to test against, so every
+path in it is reasoned rather than observed. The parts most likely to be wrong:
+
+- engine auto-detection from `HKLM:\SOFTWARE\EpicGames\Unreal Engine`
+- the `Build.bat <Target> Win64 Development -Project=...` invocation
+- `-run=pythonscript` exiting non-zero even on success
+
+If it fails, RUNNING.md section 3 has the same steps by hand, and nothing
+about the project depends on this script.
+
+---
+
 ## KI-10 — Interaction prompt is on-screen debug text
 
 **Status:** PLACEHOLDER — replaced when the UI phase lands
@@ -184,8 +203,8 @@ and must never report a build or a test they could not run.
 
 ## KI-09 — GitHub repository could not be created from the session
 
-**Status:** OPEN — user is creating the repository
-**Severity:** Medium (affects where this code lives, not the code)
+**Status:** RESOLVED (2026-09-09) — staying in `order-up-renew` by decision
+**Severity:** None
 
 The request was to develop in a newly created repository. Creating one via
 the GitHub API failed with `403 Resource not accessible by integration` — the
@@ -195,8 +214,13 @@ is scoped to `kmj84297school/order-up-renew`.
 **What was done instead:** the project is entirely self-contained in the
 `HayDayFarm/` directory, sharing nothing with the APK project around it.
 
-**Agreed 2026-09-09:** the user creates an empty repository on GitHub and
-names it, then the project is pushed there as its own repository.
+**Decided 2026-09-09:** rather than wait on a new repository, the project
+stays here, in `HayDayFarm/` on branch `claude/hay-day-3d-farm-5ijgdj`. It
+shares no files, no build system and no history with the APK project around
+it, so this costs nothing today.
+
+The move stays available at any time — the commands below still apply — but
+nothing is blocked on it, and no further work should wait for it.
 
 **To move it to its own repository:**
 

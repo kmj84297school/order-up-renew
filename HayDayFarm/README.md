@@ -20,6 +20,7 @@ Read these four files before doing anything, in this order:
 
 | File | What it holds |
 |---|---|
+| [RUNNING.md](RUNNING.md) | **How to actually build and run it** (Korean) |
 | [PROJECT_STATE.md](PROJECT_STATE.md) | Where the project is right now |
 | [NEXT_TASK.md](NEXT_TASK.md) | The exact next objective, self-contained |
 | [DECISIONS.md](DECISIONS.md) | Technical decisions and why — do not silently redo these |
@@ -27,23 +28,21 @@ Read these four files before doing anything, in this order:
 
 ## Getting it running
 
-Requires Unreal Engine 5.4 on Windows. See NEXT_TASK.md for the full
-first-build checklist, including the three lines most likely to fail.
+Needs Windows, Visual Studio 2022 with the C++ workload, and Unreal Engine
+5.4. **[RUNNING.md](RUNNING.md) is the step-by-step guide.** The short version:
+
+```powershell
+.\Tools\Setup.ps1     # locate engine, build, create the level, open the editor
+```
+
+For a structural check with no engine involved (works anywhere):
 
 ```bash
-python3 Tools/validate_project.py     # fast structural check, no engine needed
+python3 Tools/validate_project.py
 ```
 
-Then: right-click `HayDayFarm.uproject` → *Generate Visual Studio project
-files* → build `HayDayFarmEditor | Development Editor | Win64`.
-
-There is no level in the repository yet (`.umap` is binary and needs the
-editor). Create it with:
-
-```
-UnrealEditor-Cmd.exe HayDayFarm.uproject -run=pythonscript ^
-    -script="<repo>\HayDayFarm\Tools\generate_bootstrap_level.py"
-```
+There is no level in the repository (`.umap` is binary and needs the editor);
+`Setup.ps1` generates it, and RUNNING.md section 3 covers doing it by hand.
 
 The project is built to run with **zero content assets** — if no level, no
 input asset and no lighting exist, code-defined defaults stand in and say so
