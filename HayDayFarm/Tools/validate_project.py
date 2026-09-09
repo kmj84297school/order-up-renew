@@ -124,7 +124,7 @@ def check_header(path: Path, raw: str, code: str, text: str) -> None:
         error(path, "missing '#pragma once'")
 
     includes = re.findall(r'^\s*#include\s+"([^"]+)"', text, re.M)
-    reflected = re.search(r"^\s*(UCLASS|USTRUCT|UENUM)\s*\(", code, re.M)
+    reflected = re.search(r"^\s*(UCLASS|USTRUCT|UENUM|UINTERFACE)\s*\(", code, re.M)
     generated = f"{path.stem}.generated.h"
 
     if reflected:
@@ -136,10 +136,10 @@ def check_header(path: Path, raw: str, code: str, text: str) -> None:
                 f'"{generated}" must be the LAST include (found "{includes[-1]}" after it)',
             )
     elif generated in includes:
-        error(path, f'includes "{generated}" but declares no UCLASS/USTRUCT/UENUM')
+        error(path, f'includes "{generated}" but declares no reflected type')
 
     # Every UCLASS/USTRUCT must be followed by a type with GENERATED_BODY().
-    for m in re.finditer(r"^\s*(UCLASS|USTRUCT)\s*\(", code, re.M):
+    for m in re.finditer(r"^\s*(UCLASS|USTRUCT|UINTERFACE)\s*\(", code, re.M):
         tail = code[m.end():m.end() + 1200]
         body_start = tail.find("{")
         if body_start == -1:
@@ -153,7 +153,7 @@ def check_header(path: Path, raw: str, code: str, text: str) -> None:
     if not reflected:
         for kw in ("UPROPERTY", "UFUNCTION"):
             if re.search(rf"^\s*{kw}\s*\(", code, re.M):
-                error(path, f"{kw} used in a header with no UCLASS/USTRUCT")
+                error(path, f"{kw} used in a header with no reflected type")
 
 
 def resolve_include(inc: str) -> bool:
@@ -188,9 +188,9 @@ def check_includes(path: Path, text: str) -> None:
 DECL_RE = re.compile(
     r"""^[ \t]*
         (?:(?:virtual|static|explicit|inline|FORCEINLINE)\s+)*
-        (?P<ret>[A-Za-z_][\w:<>,\s\*&]*?)\s+
-        (?P<name>~?[A-Za-z_]\w*)\s*
-        \((?P<args>[^;{}]*)\)\s*
+        (?P<ret>[A-Za-z_][\w:<>,\*& \t]*?)[ \t]+
+        (?P<name>~?[A-Za-z_]\w*)[ \t]*
+        \((?P<args>[^;{}()\n]*)\)[ \t]*
         (?:const\s*)?(?:override\s*)?(?:noexcept\s*)?
         ;\s*$""",
     re.M | re.X,
@@ -216,6 +216,24 @@ def collect_class_bodies(code: str) -> list[tuple[str, str]]:
 
 NON_DEFINITION_NAMES = {"if", "for", "while", "switch", "return", "else", "do"}
 
+# UnrealHeaderTool generates the body of these, so a declaration with no
+# hand-written definition is correct rather than a link error. The author
+# supplies the _Implementation instead, which is checked normally.
+UHT_GENERATED_SPECIFIERS = ("BlueprintNativeEvent", "BlueprintImplementableEvent")
+
+
+def is_uht_generated(body: str, decl_start: int) -> bool:
+    """True if the declaration is preceded by a UFUNCTION that UHT implements."""
+    preceding = body[max(0, decl_start - 400):decl_start]
+    last_ufunction = preceding.rfind("UFUNCTION")
+    if last_ufunction == -1:
+        return False
+    # Only the UFUNCTION immediately before this declaration counts.
+    between = preceding[last_ufunction:]
+    if between.count(";") > 0:
+        return False
+    return any(spec in between for spec in UHT_GENERATED_SPECIFIERS)
+
 
 def check_definitions(header: Path, code: str) -> None:
     cpp = header.with_suffix(".cpp")
@@ -227,6 +245,8 @@ def check_definitions(header: Path, code: str) -> None:
             name = m.group("name")
             ret = m.group("ret").strip()
             if name in NON_DEFINITION_NAMES or ret.endswith(("return", "=")):
+                continue
+            if is_uht_generated(body, m.start()):
                 continue
             if "=" in m.group(0).split(")")[-1]:  # pure virtual or = default/delete
                 continue
@@ -279,7 +299,7 @@ def check_type_references(headers: list[Path], all_files: list[Path]) -> None:
     declared = set()
     for h in headers:
         code = strip_code(h.read_text())
-        declared.update(re.findall(r"\bclass\s+(?:%s\s+)?([AU]Farm\w+)" % API_MACRO, code))
+        declared.update(re.findall(r"\bclass\s+(?:%s\s+)?([AUI]Farm\w+)" % API_MACRO, code))
         declared.update(re.findall(r"\bstruct\s+(?:%s\s+)?(FFarm\w+)" % API_MACRO, code))
         declared.update(re.findall(r"\benum class\s+(EFarm\w+)", code))
         # DECLARE_*_DELEGATE*(FName, ...) declares a type via macro.
@@ -287,7 +307,7 @@ def check_type_references(headers: list[Path], all_files: list[Path]) -> None:
 
     for f in all_files:
         code = strip_code(f.read_text())
-        for name in set(re.findall(r"\b([AUE]Farm\w+|FFarm\w+)\b", code)):
+        for name in set(re.findall(r"\b([AUEI]Farm\w+|FFarm\w+)\b", code)):
             if name not in declared:
                 error(f, f"references type '{name}' which is never declared in the module")
 

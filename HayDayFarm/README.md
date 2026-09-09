@@ -11,9 +11,10 @@ extracted from the original game.
 
 ## Status
 
-**Phases 0–2 written. Never compiled.** This project was authored in a
+**Phases 0–2 and 4 written. Never compiled.** This project was authored in a
 headless Linux container with no Unreal Engine installation, so no build,
-editor session or PIE run has happened yet.
+editor session or PIE run has happened yet. Unreal is not yet installed on the
+developer's machine either — that is the current top blocker.
 
 Read these four files before doing anything, in this order:
 
@@ -54,7 +55,7 @@ in the log. See DECISIONS.md D-03.
 |---|---|
 | W A S D / arrows | Move |
 | Mouse | Look |
-| E | Interact *(seam only — Phase 4 implements it)* |
+| E | Interact with whatever you are looking at |
 | Esc | Toggle mouse cursor |
 | Left Shift | Run (optional) |
 
@@ -66,7 +67,7 @@ No jump, by design.
 Config/          Engine, game, input and editor .ini
 Content/         Assets. Currently empty except Levels/
 Docs/References/ Drop Hay Day reference imagery here — see its README
-Source/          C++ module (Core, Player, Camera, Environment)
+Source/          C++ module (Core, Player, Camera, Interaction, Environment)
 Tools/           validate_project.py, generate_bootstrap_level.py
 ```
 

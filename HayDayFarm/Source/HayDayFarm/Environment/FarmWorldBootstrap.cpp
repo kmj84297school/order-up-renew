@@ -6,7 +6,11 @@
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/SkyLightComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Core/FarmLog.h"
 #include "Engine/StaticMesh.h"
+#include "Engine/World.h"
+#include "Interaction/FarmInteractable_Nudge.h"
+#include "Interaction/FarmInteractable_Rotator.h"
 #include "UObject/ConstructorHelpers.h"
 
 AFarmWorldBootstrap::AFarmWorldBootstrap()
@@ -71,4 +75,37 @@ AFarmWorldBootstrap::AFarmWorldBootstrap()
 	HeightFog->FogDensity = 0.006f;
 	HeightFog->FogHeightFalloff = 0.15f;
 	HeightFog->StartDistance = 800.0f;
+}
+
+void AFarmWorldBootstrap::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (!bSpawnTestInteractables)
+	{
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.ObjectFlags |= RF_Transient;
+
+	// Five metres ahead of the fallback spawn point and to either side, so
+	// both are in view on spawn but need a short walk to come into range.
+	// Z places each mesh's base on the ground: the engine cube is 100 cm, so
+	// half of (100 * the actor's own scale).
+	World->SpawnActor<AFarmInteractable_Rotator>(
+		FVector(500.0f, -180.0f, 100.0f), FRotator::ZeroRotator, SpawnParams);
+
+	World->SpawnActor<AFarmInteractable_Nudge>(
+		FVector(500.0f, 180.0f, 30.0f), FRotator::ZeroRotator, SpawnParams);
+
+	UE_LOG(LogFarmEnvironment, Warning,
+		TEXT("Spawned PLACEHOLDER test interactables. Walk forward and press E."));
 }

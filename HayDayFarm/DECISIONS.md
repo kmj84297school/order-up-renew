@@ -180,3 +180,74 @@ injecting six faults, one per check, and confirming each was caught.
 **Limitation.** It is not a compiler. It cannot see engine API mismatches,
 which is exactly the class of error recorded as KI-01. Passing it means
 "structurally sound", not "builds".
+
+---
+
+## D-11 — Interaction is an interface, and focus runs on a timer
+
+**Decision.** `IFarmInteractable` (a `UINTERFACE`) is the contract.
+`UFarmInteractionComponent` on the character sphere-sweeps from the pawn's
+view point every 0.08 s and routes presses to whatever it finds.
+
+**Why an interface, not a base actor class.** Farm interactables will be a
+windmill, a bench, a chicken, a crop patch, a well. Forcing them to share an
+inheritance chain would mean the chicken inheriting from something that knows
+about static meshes. `AFarmInteractableActor` exists as an *optional*
+convenience base for the common "prop with a mesh" case, not as the contract.
+
+**Why a timer, not Tick.** Focus detection at 60 Hz is imperceptibly
+different from 12 Hz — a player's head does not turn that fast — and a sphere
+sweep every frame for a whole session is exactly the cost this project should
+not pay. Consistent with D-08.
+
+The press path re-tests rather than trusting the cached focus, since focus can
+be up to one interval stale and the player may have looked away in between.
+
+**Why a sphere sweep, not a line trace.** A line trace demands pixel-accurate
+aiming, which is at odds with a relaxed experience. 14 cm of forgiveness makes
+looking "near enough" at something work.
+
+**Why the character broadcasts a delegate instead of calling the component.**
+`AFarmCharacter::OnInteractPressed` keeps the character ignorant of what an
+interactable is, and lets later systems (a tutorial, an achievement, audio)
+listen to the same press without editing the character.
+
+---
+
+## D-12 — The Phase 4 test interactables are real prototypes, not throwaways
+
+**Decision.** The two test interactables are
+`AFarmInteractable_Rotator` (toggles continuous rotation) and
+`AFarmInteractable_Nudge` (leans away and springs back).
+
+**Rationale.** The brief names both of these as actual features:
+"Windmill: start/stop rotation" and "Crop: gentle movement or reaction". Test
+fixtures that happen to be the real mechanism cost the same to write and mean
+Phase 6 inherits working behaviour instead of starting over — only the
+placeholder cube mesh needs replacing.
+
+Rotation uses `URotatingMovementComponent`, so the actor never ticks. The
+nudge ticks *only* while the reaction is playing: tick starts disabled, is
+enabled on interact, and is disabled again when the motion settles.
+
+**Placeholder:** both use `/Engine/BasicShapes/Cube`. Engine content, so no
+authored asset is required.
+
+---
+
+## D-13 — Prompt display is a declared placeholder, the framework is not
+
+**Decision.** The interaction *framework* is complete — focus detection,
+range, `CanInteract` gating, focus-enter/leave callbacks, a prompt string, and
+a `OnFocusChanged` delegate for UI to subscribe to. The *presentation* is
+`GEngine->AddOnScreenDebugMessage`, compiled out of Shipping.
+
+**Rationale.** A real prompt needs a UMG widget, which is a binary asset that
+cannot be authored without the editor. Rather than block Phase 4 on that, or
+pretend the debug text is the finished feature, the seam is a delegate that a
+widget subscribes to later, and the placeholder is recorded as KI-10.
+
+The focus highlight is the same shape: `SetRenderCustomDepth(true)` is the
+real hook and is already wired (`r.CustomDepth=3` is set in DefaultEngine.ini),
+but it is inert until Phase 10 supplies an outline post-process material. A
+4% scale-up stands in so focus is visible in the meantime.

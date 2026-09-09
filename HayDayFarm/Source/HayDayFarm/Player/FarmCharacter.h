@@ -9,6 +9,7 @@
 
 class UFarmCameraComponent;
 class UFarmInputConfig;
+class UFarmInteractionComponent;
 
 /** Broadcast when the player presses the interact key. Phase 4's interaction
  *  component subscribes to this so the character never has to know what an
@@ -37,10 +38,14 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Farm|Camera")
 	UFarmCameraComponent* GetFarmCamera() const { return FarmCamera; }
 
+	UFUNCTION(BlueprintPure, Category = "Farm|Interaction")
+	UFarmInteractionComponent* GetInteractionComponent() const { return InteractionComponent; }
+
 	/** Fires on interact key press. Bound by the Phase 4 interaction system. */
 	FFarmInteractPressedSignature OnInteractPressed;
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 	//~ Input handlers
@@ -82,6 +87,12 @@ private:
 	/** First-person view. Behaviour comes from the camera mode stack. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farm|Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UFarmCameraComponent> FarmCamera;
+
+	/** Finds what the player is looking at. Subscribes to OnInteractPressed
+	 *  in BeginPlay rather than being called directly, so other systems can
+	 *  listen for the same press without going through the character. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farm|Interaction", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UFarmInteractionComponent> InteractionComponent;
 
 	/** The config actually in use this session (asset or generated). */
 	UPROPERTY(Transient)

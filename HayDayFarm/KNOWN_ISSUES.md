@@ -104,14 +104,15 @@ simply supersedes it. Deleting the class is a Phase 3 or Phase 9 cleanup.
 
 ## KI-06 — Interact key is wired to nothing
 
-**Status:** PLACEHOLDER — implemented in Phase 4
-**Severity:** None (working as intended)
+**Status:** RESOLVED (2026-09-09)
 **File:** `Source/HayDayFarm/Player/FarmCharacter.cpp`
 
-Pressing **E** logs at Verbose and broadcasts
-`AFarmCharacter::OnInteractPressed`, which has no listeners. This is the
-intended seam for Phase 4: the interaction component subscribes to the
-delegate, so the character never needs to know what an interactable is.
+`UFarmInteractionComponent` now subscribes to
+`AFarmCharacter::OnInteractPressed` in `BeginPlay`, so **E** reaches whatever
+the player is looking at. The delegate seam was kept rather than calling the
+component directly — see DECISIONS.md D-11.
+
+Unverified in engine like everything else (see KI-01).
 
 ---
 
@@ -145,9 +146,45 @@ something real to do.
 
 ---
 
+## KI-10 — Interaction prompt is on-screen debug text
+
+**Status:** PLACEHOLDER — replaced when the UI phase lands
+**Severity:** None (working as intended)
+**File:** `Source/HayDayFarm/Interaction/FarmInteractionComponent.cpp`
+
+The prompt is drawn with `GEngine->AddOnScreenDebugMessage`, wrapped in
+`#if !UE_BUILD_SHIPPING`. A real prompt needs a UMG widget, which is a binary
+asset and cannot be authored without the editor.
+
+The framework itself is complete: `UFarmInteractionComponent::OnFocusChanged`
+broadcasts the focused actor and its prompt text, so a widget subscribes to
+that and the component does not change. Toggle with `bShowDebugPrompt`.
+
+Related: the focus highlight uses a 4% scale-up as a stand-in.
+`SetRenderCustomDepth(true)` is already called and is the real hook, but it is
+inert until Phase 10 supplies an outline post-process material.
+
+---
+
+## KI-11 — Unreal Engine is not installed on the user's machine
+
+**Status:** BLOCKED — needs the user
+**Severity:** High (blocks all engine-side verification)
+
+Confirmed by the user on 2026-09-09. Until Unreal 5.4 (or another 5.x, with
+the three-line version change in NEXT_TASK.md Task A) is installed, nothing in
+this project can be compiled, opened, or played, and KI-01, KI-02, KI-04 and
+KI-08 cannot be closed.
+
+The scheduled daily sessions run in a headless Linux container and are subject
+to the same limit. They must continue writing and statically validating code,
+and must never report a build or a test they could not run.
+
+---
+
 ## KI-09 — GitHub repository could not be created from the session
 
-**Status:** OPEN — needs the user
+**Status:** OPEN — user is creating the repository
 **Severity:** Medium (affects where this code lives, not the code)
 
 The request was to develop in a newly created repository. Creating one via
@@ -157,6 +194,9 @@ is scoped to `kmj84297school/order-up-renew`.
 
 **What was done instead:** the project is entirely self-contained in the
 `HayDayFarm/` directory, sharing nothing with the APK project around it.
+
+**Agreed 2026-09-09:** the user creates an empty repository on GitHub and
+names it, then the project is pushed there as its own repository.
 
 **To move it to its own repository:**
 

@@ -40,6 +40,14 @@ public:
 	static constexpr float GroundHalfExtent = 6000.0f;
 
 protected:
+	virtual void BeginPlay() override;
+
+	/** Spawn two interactables in front of the fallback spawn point so the
+	 *  Phase 4 interaction framework can be exercised before there is any
+	 *  real farm content. Turn off once the blockout has its own props. */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Farm|Placeholder")
+	bool bSpawnTestInteractables = true;
+
 	/** 120 m x 120 m of flat ground with collision. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Farm|Placeholder")
 	TObjectPtr<UStaticMeshComponent> Ground;

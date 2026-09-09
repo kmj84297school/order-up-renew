@@ -14,16 +14,20 @@ inventories, production chains, farming management, large UI.
 
 ## Current phase
 
-**Phase 2 complete (code-side). Phase 3 not started.**
+**Phases 1, 2 and 4 written. None compiled. Phase 3 blocked.**
 
 | Phase | Title | Status |
 |---|---|---|
 | 0 | Environment & requirements audit | Done |
 | 1 | Stable project foundation | Code complete, **unbuilt** (see below) |
 | 2 | Free walk movement and camera | Code complete, **unverified in engine** |
-| 3 | Hay Day farm blockout | Not started — blocked on reference imagery |
-| 4 | Interaction framework | Not started |
+| 3 | Hay Day farm blockout | **BLOCKED** — no reference imagery (KI-03) |
+| 4 | Interaction framework | Code complete, **unverified in engine** |
 | 5+ | Animals, motion, time/weather, audio, assets, polish, tour, optimisation | Not started |
+
+Phase 4 was taken out of order deliberately: Phase 3 is blocked on user-supplied
+references, Phase 4 needs no art, and the brief says to continue whatever is not
+blocked rather than stall.
 
 ## Build status
 
@@ -33,12 +37,14 @@ build, no editor session and no PIE run has happened.
 
 What *has* been verified:
 
-- `Tools/validate_project.py` passes with 0 errors across 13 headers and
-  13 sources. It checks generated.h placement, GENERATED_BODY presence,
-  include-path correctness, brace balance, declared-but-undefined methods,
-  undeclared `Farm*` type references, and .uproject/Build.cs/Target.cs
-  wiring. The validator was itself fault-injection tested — all six seeded
-  faults were detected.
+- `Tools/validate_project.py` passes with 0 errors across 18 headers and
+  18 sources. It checks generated.h placement, GENERATED_BODY presence
+  (UCLASS/USTRUCT/UINTERFACE), include-path correctness, brace balance,
+  declared-but-undefined methods, undeclared `Farm*` type references, and
+  .uproject/Build.cs/Target.cs wiring. It understands that UHT generates the
+  bodies of `BlueprintNativeEvent` functions and does not flag them.
+- The validator was fault-injection tested: **eight seeded faults, one per
+  check, all eight detected**, with the baseline clean before and after.
 - All four `Config/*.ini` files parse.
 - `HayDayFarm.uproject` is valid JSON.
 - Both Python tools parse.
@@ -49,9 +55,9 @@ builds. **The first task in NEXT_TASK.md is to build it.**
 ## Engine
 
 - **Target: Unreal Engine 5.4** (`EngineAssociation` in `HayDayFarm.uproject`).
-- This was chosen as a stable default, *not* because it was measured against
-  an installed engine. If a different 5.x is installed, change the one
-  `EngineAssociation` field and the two `IncludeOrderVersion` lines in
+- **The user has confirmed Unreal is not installed yet.** 5.4 is therefore
+  still an unconfirmed default. If a different 5.x gets installed, change the
+  one `EngineAssociation` field and the two `IncludeOrderVersion` lines in
   `Source/*.Target.cs`. See DECISIONS.md D-01.
 - Platform target: Windows PC, D3D12.
 
@@ -77,7 +83,13 @@ Source/HayDayFarm/
     FarmCameraComponent.h/.cpp    UCameraComponent that asks the stack
     FarmPlayerCameraManager.h/.cpp  Pitch clamp; home for future fades
   Environment/
-    FarmWorldBootstrap.h/.cpp     PLACEHOLDER lit ground plane
+    FarmWorldBootstrap.h/.cpp     PLACEHOLDER lit ground plane + test props
+  Interaction/
+    FarmInteractable.h/.cpp             IFarmInteractable interface
+    FarmInteractionComponent.h/.cpp     Focus detection + interact routing
+    FarmInteractableActor.h/.cpp        Optional mesh-prop base class
+    FarmInteractable_Rotator.h/.cpp     Test prop / windmill prototype
+    FarmInteractable_Nudge.h/.cpp       Test prop / crop-reaction prototype
 ```
 
 Two decisions shape everything downstream (details in DECISIONS.md):
@@ -98,7 +110,7 @@ Two decisions shape everything downstream (details in DECISIONS.md):
 |---|---|
 | W A S D / arrows | Move |
 | Mouse | Look (pitch clamped to ±78°) |
-| E | Interact — fires `OnInteractPressed`; **nothing listens yet (Phase 4)** |
+| E | Interact — routed to `UFarmInteractionComponent` |
 | Esc | Toggle mouse capture / cursor |
 | Left Shift | Run (optional, `bAllowRunning`) |
 
@@ -121,8 +133,33 @@ authored: no meshes, materials, textures, animations, animal assets, audio,
 fonts, or levels. Most importantly, **no Hay Day reference imagery has been
 supplied**, which is what blocks Phase 3.
 
+## Interaction (Phase 4)
+
+`IFarmInteractable` is the contract — an interface, not a base class, so a
+chicken and a windmill can both be interactable without sharing an ancestor.
+All four functions are `BlueprintNativeEvent`, so interactables can be written
+in C++ or Blueprint.
+
+`UFarmInteractionComponent` lives on the character, sphere-sweeps from the
+pawn's view point (250 cm range, 14 cm radius) on a **0.08 s timer rather than
+every frame**, and routes presses via the character's `OnInteractPressed`
+delegate. Two test interactables are spawned by the placeholder world.
+
+The on-screen prompt is currently `AddOnScreenDebugMessage` — a declared
+placeholder, see KI-10.
+
+## Automation
+
+A daily Routine (`trig_01XewNh9VVXigHdSSoqDqhkh`, cron `0 17 * * *` UTC =
+**02:00 KST**) starts a fresh session that reads these four files and continues
+NEXT_TASK.md. Those sessions run in the same headless Linux container and
+**cannot build or test in the editor** — that constraint is stated in the
+Routine's own prompt.
+
 ## Recent major changes
 
-- Project created from scratch in this repository (2026-09-09). The
-  repository previously held an unrelated Android APK repackaging project;
-  that work is untouched on the default branch.
+- 2026-09-09: Project created from scratch. The repository previously held an
+  unrelated Android APK repackaging project; that work is untouched on the
+  default branch.
+- 2026-09-09: Phase 4 interaction framework added; validator extended for
+  UINTERFACE and BlueprintNativeEvent and re-fault-tested (8/8).

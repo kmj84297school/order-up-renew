@@ -10,6 +10,7 @@
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "InputMappingContext.h"
+#include "Interaction/FarmInteractionComponent.h"
 #include "Player/FarmInputConfig.h"
 #include "Player/FarmPlayerController.h"
 
@@ -62,6 +63,18 @@ AFarmCharacter::AFarmCharacter()
 	FarmCamera = CreateDefaultSubobject<UFarmCameraComponent>(TEXT("FarmCamera"));
 	FarmCamera->SetupAttachment(GetCapsuleComponent());
 	FarmCamera->SetDefaultCameraModeClass(UFarmCameraMode_FreeWalk::StaticClass());
+
+	InteractionComponent = CreateDefaultSubobject<UFarmInteractionComponent>(TEXT("InteractionComponent"));
+}
+
+void AFarmCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (InteractionComponent)
+	{
+		OnInteractPressed.AddUObject(InteractionComponent.Get(), &UFarmInteractionComponent::TryInteract);
+	}
 }
 
 UFarmInputConfig* AFarmCharacter::ResolveInputConfig()
@@ -159,8 +172,9 @@ void AFarmCharacter::Look(const FInputActionValue& Value)
 
 void AFarmCharacter::Interact(const FInputActionValue& Value)
 {
-	// Phase 4 replaces this with real target detection. Until then the
-	// delegate fires and nothing is listening, which is the intended seam.
+	// The interaction component subscribes to this in BeginPlay. Going
+	// through the delegate rather than calling the component keeps the
+	// character ignorant of what an interactable is.
 	UE_LOG(LogFarmPlayer, Verbose, TEXT("Interact pressed."));
 	OnInteractPressed.Broadcast();
 }
