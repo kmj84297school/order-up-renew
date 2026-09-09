@@ -21,6 +21,7 @@ Read these four files before doing anything, in this order:
 | File | What it holds |
 |---|---|
 | [RUNNING.md](RUNNING.md) | **How to actually build and run it** (Korean) |
+| [Docs/CODEX_HANDOFF.md](Docs/CODEX_HANDOFF.md) | Paste-ready prompt for handing the project to another agent |
 | [PROJECT_STATE.md](PROJECT_STATE.md) | Where the project is right now |
 | [NEXT_TASK.md](NEXT_TASK.md) | The exact next objective, self-contained |
 | [DECISIONS.md](DECISIONS.md) | Technical decisions and why — do not silently redo these |

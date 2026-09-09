@@ -166,3 +166,6 @@ Routine's own prompt.
 - 2026-09-09: Decided the project stays in `order-up-renew` rather than
   waiting on a new repository (KI-09 closed). Added `Tools/Setup.ps1` and
   `RUNNING.md` so the first build is one command.
+- 2026-09-09: Added `Docs/CODEX_HANDOFF.md`, a paste-ready prompt for handing
+  the project to another coding agent. **Keep it current on handoff** — its
+  "Current state" and "Your task" sections go stale fastest.
