@@ -15,6 +15,17 @@ this whole message before acting. It is written to save you exploration turns â€
 the facts below are current as of commit `c207966` and you can trust them, but
 verify anything you are about to depend on.
 
+## Latest update â€” 2026-09-12
+
+The sections below describe the original handoff. Superseding status:
+Task B bench viewing is now written in FarmCameraMode_Bench and
+FarmInteractable_Bench, with session routing in FarmInteractionComponent.
+Static validation passes on 20 headers and 20 sources. No compile or play
+has happened. Windows audit found Epic Launcher but no usable UE 5.x install.
+Read PROJECT_STATE.md / NEXT_TASK.md for current priorities, and run
+Docs/BENCH_VERIFICATION.md after the first build. Do not reimplement the bench.
+First build has priority over blockout even if reference images arrive.
+
 ## 1. The project
 
 A high-quality **stylized 3D farm you can walk around in**, built in Unreal

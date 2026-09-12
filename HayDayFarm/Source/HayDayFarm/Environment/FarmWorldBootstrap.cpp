@@ -11,6 +11,7 @@
 #include "Engine/World.h"
 #include "Interaction/FarmInteractable_Nudge.h"
 #include "Interaction/FarmInteractable_Rotator.h"
+#include "Interaction/FarmInteractable_Bench.h"
 #include "UObject/ConstructorHelpers.h"
 
 AFarmWorldBootstrap::AFarmWorldBootstrap()
@@ -105,6 +106,11 @@ void AFarmWorldBootstrap::BeginPlay()
 
 	World->SpawnActor<AFarmInteractable_Nudge>(
 		FVector(500.0f, 180.0f, 30.0f), FRotator::ZeroRotator, SpawnParams);
+
+	UE_LOG(LogFarmEnvironment, Warning,
+		TEXT("Spawning PLACEHOLDER bench at the right side of the test area."));
+	World->SpawnActor<AFarmInteractable_Bench>(
+		FVector(350.0f, 400.0f, 22.5f), FRotator::ZeroRotator, SpawnParams);
 
 	UE_LOG(LogFarmEnvironment, Warning,
 		TEXT("Spawned PLACEHOLDER test interactables. Walk forward and press E."));

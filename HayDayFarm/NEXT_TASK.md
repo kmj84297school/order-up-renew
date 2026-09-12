@@ -14,6 +14,11 @@ Phases 1, 2 and 4 are written and pass static validation. None of it has been
 through UnrealHeaderTool, a compiler, or a single frame of PIE. Treat all of
 it as unproven until it builds.
 
+Current audit (2026-09-12): Windows host, Epic Launcher present, no registered
+or default-folder UE 5.x installation found. Static validation is clean on
+20 headers + 20 sources. Reference directory contains README.md only.
+**First build takes priority even if reference images become available.**
+
 ### Task A — first build (user's Windows machine; cannot be done in the container)
 
 Prerequisite: install Unreal Engine 5.4 via the Epic Games Launcher. If a
@@ -40,7 +45,7 @@ different 5.x is installed instead, change `EngineAssociation` in
    origin and a `PlayerStart` at `(0, 0, 120)` by hand and save as
    `Content/Levels/L_FarmBlockout`.
 
-6. **Play in editor and check each row:**
+6. **Play in editor and check each row, then run `Docs/BENCH_VERIFICATION.md`:**
 
    | Check | Expected |
    |---|---|
@@ -71,16 +76,20 @@ Scheduled daily sessions run headless with no engine. They cannot build,
 open the editor, or author `.uasset`/`.umap` files, and must never claim
 otherwise. Useful work that remains, in order:
 
-1. **A `UFarmCameraMode_Bench` subclass.** Small, no art, and it is the only
-   way to exercise the Phase 2 camera-mode blending before Phase 11 depends
-   on it — right now `UFarmCameraMode_FreeWalk` is the only mode, so the
-   stack's blend path has never run with two modes in it. Add an
-   interactable bench that pushes the mode, and returns to Free Walk on a
-   second press.
+1. **Bench view is now written, still unverified.** The exact implementation
+   is in `Camera/FarmCameraMode_Bench.*`, `Interaction/FarmInteractable_Bench.*`,
+   `Interaction/FarmInteractionComponent.*`, and the bootstrap spawn in
+   `Environment/FarmWorldBootstrap.cpp`. On the first available engine build,
+   execute every step in `Docs/BENCH_VERIFICATION.md`, including interrupted
+   blends, destroyed seats, possession changes and balanced input locks.
+   Done means the editor target builds and the checks pass; record build
+   success separately from runtime failures. Do not claim this is done from
+   the static validator alone.
 2. **Interaction polish:** `CanInteract` currently always returns true;
    consider a facing-angle check so the player must roughly face a thing,
    not merely have it under the crosshair.
-3. **Validator coverage:** it does not yet check that `UPROPERTY` is followed
+3. **Validator coverage:** run `python Tools/test_validate_project.py` along
+   with the normal validator. Missing Farm includes are now covered (KI-15); it does not yet check that `UPROPERTY` is followed
    by a declaration, or that `UCLASS` specifiers are well-formed.
 
 Do not start Phases 5–12. Do not start Phase 3 (see below).
@@ -99,5 +108,5 @@ than none: it would be thrown away, and in the meantime it silently becomes
 the reference for building scale, path widths and sight lines.
 
 A session should check whether images have appeared in `Docs/References/`. If
-they have, Phase 3 is unblocked and becomes the priority — the folder's
+they have, Phase 3 is unblocked and becomes the priority after the first build — the folder's
 README lists what is most useful and why.

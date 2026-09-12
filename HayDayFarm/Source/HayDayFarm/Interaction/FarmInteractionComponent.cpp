@@ -1,6 +1,11 @@
 // Copyright (c) 2026. Private personal project.
 
 #include "Interaction/FarmInteractionComponent.h"
+#include "Camera/FarmCameraComponent.h"
+#include "Camera/FarmCameraMode_Bench.h"
+#include "GameFramework/Controller.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Core/FarmLog.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/Engine.h"
@@ -35,6 +40,7 @@ void UFarmInteractionComponent::BeginPlay()
 
 void UFarmInteractionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	EndSeatedView();
 	if (UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(FocusTimerHandle);
@@ -119,7 +125,13 @@ AActor* UFarmInteractionComponent::FindFocusTarget() const
 
 void UFarmInteractionComponent::RefreshFocus()
 {
-	SetFocusedActor(FindFocusTarget());
+	const APawn* Pawn = Cast<APawn>(GetOwner());
+	if (bSeated && (!ActiveSeat.IsValid() || !SeatedController.IsValid()
+		|| !Pawn || Pawn->GetController() != SeatedController.Get()))
+	{
+		EndSeatedView();
+	}
+	SetFocusedActor(bSeated ? ActiveSeat.Get() : FindFocusTarget());
 
 #if !UE_BUILD_SHIPPING
 	if (bShowDebugPrompt && GEngine && FocusedActor.IsValid())
@@ -130,14 +142,26 @@ void UFarmInteractionComponent::RefreshFocus()
 			FarmInteractionInternal::DebugPromptKey, FocusRefreshInterval * 1.5f,
 			FColor::White, FString::Printf(TEXT("[E]  %s"), *FocusedPrompt.ToString()));
 	}
+	else if (GEngine)
+	{
+		GEngine->RemoveOnScreenDebugMessage(FarmInteractionInternal::DebugPromptKey);
+	}
 #endif
 }
 
 void UFarmInteractionComponent::SetFocusedActor(AActor* NewFocus)
 {
 	AActor* PreviousFocus = FocusedActor.Get();
+	const FText NewPrompt = bSeated
+		? NSLOCTEXT("FarmBench", "Stand", "Stand up")
+		: (NewFocus ? IFarmInteractable::Execute_GetInteractionPrompt(NewFocus) : FText::GetEmpty());
 	if (PreviousFocus == NewFocus)
 	{
+		if (!FocusedPrompt.EqualTo(NewPrompt))
+		{
+			FocusedPrompt = NewPrompt;
+			OnFocusChanged.Broadcast(NewFocus, FocusedPrompt);
+		}
 		return;
 	}
 
@@ -147,9 +171,7 @@ void UFarmInteractionComponent::SetFocusedActor(AActor* NewFocus)
 	}
 
 	FocusedActor = NewFocus;
-	FocusedPrompt = NewFocus
-		? IFarmInteractable::Execute_GetInteractionPrompt(NewFocus)
-		: FText::GetEmpty();
+	FocusedPrompt = NewPrompt;
 
 	if (NewFocus)
 	{
@@ -163,6 +185,12 @@ void UFarmInteractionComponent::SetFocusedActor(AActor* NewFocus)
 
 void UFarmInteractionComponent::TryInteract()
 {
+	if (bSeated)
+	{
+		EndSeatedView();
+		RefreshFocus();
+		return;
+	}
 	// Focus can be up to FocusRefreshInterval stale, and the player may have
 	// looked away in between, so re-test rather than trusting the cache.
 	AActor* Target = FindFocusTarget();
@@ -175,4 +203,49 @@ void UFarmInteractionComponent::TryInteract()
 
 	UE_LOG(LogFarm, Log, TEXT("Interacting with %s."), *GetNameSafe(Target));
 	IFarmInteractable::Execute_OnInteract(Target, GetOwner());
+	RefreshFocus();
+}
+
+bool UFarmInteractionComponent::BeginSeatedView(AActor* Seat, const FVector& ViewLocation)
+{
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	AController* Controller = Character ? Character->GetController() : nullptr;
+	UFarmCameraComponent* Camera = UFarmCameraComponent::FindFarmCameraComponent(GetOwner());
+	if (bSeated || !IsValid(Seat) || !Seat->Implements<UFarmInteractable>()
+		|| !Controller || !Camera || !Camera->GetDefaultCameraModeClass()
+		|| !Character->GetCharacterMovement()->IsMovingOnGround())
+	{
+		return false;
+	}
+
+	bSeated = true;
+	ActiveSeat = Seat;
+	SeatedController = Controller;
+	SeatedViewLocation = ViewLocation;
+	// Balance only this session's input lock; preserve locks owned by menus.
+	Controller->SetIgnoreMoveInput(true);
+	Character->GetCharacterMovement()->StopMovementImmediately();
+	Character->ConsumeMovementInputVector();
+	Camera->PushCameraMode(UFarmCameraMode_Bench::StaticClass());
+	return true;
+}
+
+void UFarmInteractionComponent::EndSeatedView()
+{
+	if (!bSeated)
+	{
+		return;
+	}
+
+	bSeated = false;
+	if (AController* Controller = SeatedController.Get())
+	{
+		Controller->SetIgnoreMoveInput(false);
+	}
+	if (UFarmCameraComponent* Camera = UFarmCameraComponent::FindFarmCameraComponent(GetOwner()))
+	{
+		Camera->ReturnToDefaultCameraMode();
+	}
+	ActiveSeat.Reset();
+	SeatedController.Reset();
 }

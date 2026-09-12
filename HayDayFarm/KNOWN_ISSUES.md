@@ -238,3 +238,43 @@ git push -u origin main
 
 Git history for these files is short and not worth preserving across the
 move; the working tree is what matters.
+
+
+## KI-13 — Bench view awaits engine verification
+
+**Status:** OPEN / PLACEHOLDER (2026-09-12)
+**Severity:** Medium
+
+Bench camera and interaction code passes static checks but has never been
+compiled or played. No engine was found during the Windows audit. The seat is
+an engine cube, view-only: the pawn remains at its original safe approach
+position. No body animation or camera obstruction sweep is implemented.
+A seat placed near walls could clip the camera during transition. Keep the
+fixture in the open test area until obstruction handling is validated.
+Execute `Docs/BENCH_VERIFICATION.md` on first build, especially quick toggle,
+seat destruction, controller replacement and movement-lock restoration.
+
+## KI-14 — Interaction prompt stayed stale on the same actor
+
+**Status:** RESOLVED in source (2026-09-12); runtime verification pending
+**Severity:** Low
+
+`SetFocusedActor` returned early for an unchanged actor without re-reading
+its prompt. Toggling a rotator therefore retained its previous prompt.
+The component now compares text on refresh, broadcasts changed text, refreshes
+immediately after interaction, and clears debug text when there is no focus.
+The same path supports the bench's persistent "Stand up" prompt.
+
+
+## KI-15 — Missing Farm header escaped static include validation
+
+**Status:** RESOLVED (2026-09-12)
+**Severity:** Medium
+
+Fault injection found that an include with a nonexistent basename was always
+assumed to be an engine/plugin header. `Camera/FarmMissingMode.h` escaped.
+The checker now identifies the project's Farm basename convention, while
+continuing to allow engine headers in the shared Camera directory.
+Verification: four regression tests pass via `python Tools/test_validate_project.py`;
+three isolated seeded faults (generated header, undefined method, missing
+project header) are detected, with a clean restored fixture.

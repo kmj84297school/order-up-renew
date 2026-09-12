@@ -7,6 +7,8 @@
 #include "Engine/EngineTypes.h"
 #include "FarmInteractionComponent.generated.h"
 
+class AController;
+
 /** Focus changed. NewFocus is null when nothing is focused. */
 DECLARE_MULTICAST_DELEGATE_TwoParams(FFarmFocusChangedSignature, AActor* /*NewFocus*/, const FText& /*Prompt*/);
 
@@ -40,6 +42,12 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Farm|Interaction")
 	FText GetFocusedPrompt() const { return FocusedPrompt; }
+
+	/** Owns the session so E can exit even when the bench is behind the view. */
+	bool BeginSeatedView(AActor* Seat, const FVector& ViewLocation);
+	void EndSeatedView();
+	bool IsSeated() const { return bSeated; }
+	FVector GetSeatedViewLocation() const { return SeatedViewLocation; }
 
 protected:
 	virtual void BeginPlay() override;
@@ -86,4 +94,9 @@ private:
 	FText FocusedPrompt;
 
 	FTimerHandle FocusTimerHandle;
+
+	bool bSeated = false;
+	TWeakObjectPtr<AActor> ActiveSeat;
+	TWeakObjectPtr<AController> SeatedController;
+	FVector SeatedViewLocation = FVector::ZeroVector;
 };

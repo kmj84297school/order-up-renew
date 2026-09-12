@@ -168,10 +168,9 @@ def module_files_named(basename: str) -> list[Path]:
 def check_includes(path: Path, text: str) -> None:
     """Flags project includes whose path is wrong.
 
-    An include is only judged if a file of that name actually exists somewhere
-    in this module. Anything else is an engine or plugin header and is out of
-    scope -- note that the module's Camera/ folder shares a prefix with the
-    engine's Camera/ headers, so a blunt prefix test gives false positives.
+    Farm-prefixed basenames belong to this project, even when missing.
+    Other names are judged only when the file exists somewhere in the module:
+    Camera/ is also an engine directory, so a directory-prefix test is unsafe.
     """
     for inc in re.findall(r'^\s*#include\s+"([^"]+)"', text, re.M):
         if inc.endswith(".generated.h") or resolve_include(inc):
@@ -179,6 +178,8 @@ def check_includes(path: Path, text: str) -> None:
 
         candidates = module_files_named(Path(inc).name)
         if not candidates:
+            if Path(inc).name.startswith("Farm"):
+                error(path, f'project include "{inc}" does not exist')
             continue  # engine / plugin header
 
         actual = ", ".join(str(c.relative_to(MODULE_ROOT)) for c in candidates)

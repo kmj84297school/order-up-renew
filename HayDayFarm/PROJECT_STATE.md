@@ -1,6 +1,6 @@
 # PROJECT_STATE
 
-Last updated: 2026-09-09
+Last updated: 2026-09-12
 
 ## What this project is
 
@@ -35,10 +35,20 @@ blocked rather than stall.
 been a headless Linux container with no Unreal Engine installation, so no
 build, no editor session and no PIE run has happened.
 
+2026-09-12 Windows audit: Epic Launcher is present, but its installation list
+is empty; no usable UE 5.x installation was found in the default engine
+folder or registered engine locations. The legacy 4.0 registry entry points
+to an absent directory. No engine build or play test was attempted.
+
 What *has* been verified:
 
-- `Tools/validate_project.py` passes with 0 errors across 18 headers and
-  18 sources. It checks generated.h placement, GENERATED_BODY presence
+- 2026-09-12: Four include-validator regression tests pass. Three isolated
+  seeded faults were detected after correcting KI-15, and the restored copy
+  passed. All Python tools parse; project JSON parses; `git diff --check`
+  passes. These are static/tool checks, not Unreal gameplay tests.
+
+- `Tools/validate_project.py` passes with 0 errors across 20 headers and
+  20 sources. It checks generated.h placement, GENERATED_BODY presence
   (UCLASS/USTRUCT/UINTERFACE), include-path correctness, brace balance,
   declared-but-undefined methods, undeclared `Farm*` type references, and
   .uproject/Build.cs/Target.cs wiring. It understands that UHT generates the
@@ -162,7 +172,25 @@ If it is re-enabled, note that those sessions run in a headless Linux
 container and **cannot build or test in the editor** — that constraint is
 stated in the Routine's own prompt.
 
+## Bench view extension (2026-09-12)
+
+Task B's first unit is written: `UFarmCameraMode_Bench` and
+`AFarmInteractable_Bench`, with a seated session owned by the existing
+interaction component. The camera blends to a fixed seat eye location;
+mouse look remains available and E exits regardless of aim. Movement locks
+are balanced on exit, seat loss, controller change and component teardown.
+Character and PlayerController source files are unchanged.
+
+The bootstrap spawns a placeholder seat block. The pawn remains at its
+approach location; no seated animation or camera obstruction sweep exists.
+Prompt text now refreshes even when focus stays on the same actor.
+See `Docs/BENCH_VERIFICATION.md` for pending engine checks and KI-13/KI-14.
+
 ## Recent major changes
+
+- 2026-09-12: Added bench viewing and exit routing; fixed cached interaction
+  prompt text. Static validation passes on 20 headers / 20 sources; Unreal
+  compilation and runtime verification remain blocked.
 
 - 2026-09-09: Project created from scratch. The repository previously held an
   unrelated Android APK repackaging project; that work is untouched on the

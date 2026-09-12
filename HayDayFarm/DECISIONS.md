@@ -251,3 +251,22 @@ The focus highlight is the same shape: `SetRenderCustomDepth(true)` is the
 real hook and is already wired (`r.CustomDepth=3` is set in DefaultEngine.ini),
 but it is inert until Phase 10 supplies an outline post-process material. A
 4% scale-up stands in so focus is visible in the meantime.
+
+
+## D-14 — The interaction component owns the seated session
+
+**Decision (2026-09-12).** The bench requests a session on the pawn's existing
+interaction component. That component retains a weak seat and controller,
+balances one movement-input lock, and routes E to exit regardless of aim.
+The camera subclass owns all view evaluation, retaining its eye position
+through blend-out. Character and PlayerController need no changes.
+
+**Rationale.** Requiring another sweep hit on a bench would strand a seated
+player looking away. Owning the session on the pawn also lets seat loss,
+controller changes and component teardown release the lock on the timer or
+EndPlay path. A global ResetIgnoreMoveInput would erase other systems' locks,
+so only this session's SetIgnoreMoveInput call is balanced.
+
+**Limit.** This is view-only sitting in an open placeholder area; the capsule
+stays at its approach position. Camera obstruction and seated body animation
+remain explicit limitations, not completed features.
