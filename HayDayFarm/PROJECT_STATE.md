@@ -14,14 +14,14 @@ inventories, production chains, farming management, large UI.
 
 ## Current phase
 
-**Phases 1, 2 and 4 written. None compiled. Phase 3 blocked.**
+**Phases 1, 2 and 4 written. None compiled. Phase 3 references received; engine blockout pending.**
 
 | Phase | Title | Status |
 |---|---|---|
 | 0 | Environment & requirements audit | Done |
 | 1 | Stable project foundation | Code complete, **unbuilt** (see below) |
 | 2 | Free walk movement and camera | Code complete, **unverified in engine** |
-| 3 | Hay Day farm blockout | **BLOCKED** — no reference imagery (KI-03) |
+| 3 | Hay Day farm blockout | References received; first engine build pending (KI-03/KI-11) |
 | 4 | Interaction framework | Code complete, **unverified in engine** |
 | 5+ | Animals, motion, time/weather, audio, assets, polish, tour, optimisation | Not started |
 
@@ -140,8 +140,9 @@ placeholder ground).
 
 **Missing — see KNOWN_ISSUES.md for the full list.** Nothing has been
 authored: no meshes, materials, textures, animations, animal assets, audio,
-fonts, or levels. Most importantly, **no Hay Day reference imagery has been
-supplied**, which is what blocks Phase 3.
+fonts, or levels. Most importantly, **13 unique Hay Day reference PNGs are now supplied**.
+Their classification and additional research are in `Docs/References/README.md`
+and `RESEARCH.md`. Engine installation and first build remain pending.
 
 ## Interaction (Phase 4)
 
@@ -185,6 +186,15 @@ The bootstrap spawns a placeholder seat block. The pawn remains at its
 approach location; no seated animation or camera obstruction sweep exists.
 Prompt text now refreshes even when focus stays on the same actor.
 See `Docs/BENCH_VERIFICATION.md` for pending engine checks and KI-13/KI-14.
+
+## Reference intake (2026-09-12)
+
+Stored 15 user attachments as 13 unique original PNGs through Git LFS, with
+SHA-256 manifest and duplicate mappings. Image 4 supports a limited core-area
+adjacency study; images 5/6 support paths/planting. The regional map is not a
+single farm plan. External studio/artist sources are listed with inspection
+limits in `Docs/References/RESEARCH.md`. KI-03's missing-reference condition is
+resolved. No engine level was authored and no runtime verification occurred.
 
 ## Recent major changes
 

@@ -15,6 +15,14 @@ this whole message before acting. It is written to save you exploration turns �
 the facts below are current as of commit `c207966` and you can trust them, but
 verify anything you are about to depend on.
 
+## Reference update — 2026-09-12 (supersedes missing-image statements below)
+
+User supplied 15 attachments; 13 unique PNG originals are now in
+Docs/References with manifest.json, README.md analysis and RESEARCH.md sources.
+KI-03's absent-reference blocker is resolved. First engine build still comes
+first; no Phase 3 level is authored. Use the current NEXT_TASK.md, not the
+historical empty-reference instructions below.
+
 ## Latest update — 2026-09-12
 
 The sections below describe the original handoff. Superseding status:

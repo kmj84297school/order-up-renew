@@ -1,0 +1,146 @@
+{
+  "received": "2026-09-12",
+  "source": "User supplied attachments; individual original artwork URLs not supplied",
+  "images": [
+    {
+      "attachment": 1,
+      "file": "farm_overview_01.png",
+      "width": 261,
+      "height": 193,
+      "bytes": 133300,
+      "sha256": "9ff632ced1c505299c26658b6db16e127d3d8afe36055489f6017132ba7f9274",
+      "duplicate_of": null
+    },
+    {
+      "attachment": 2,
+      "file": "style_promo_02.png",
+      "width": 1280,
+      "height": 720,
+      "bytes": 1421950,
+      "sha256": "1b009c058eb11f1934e6205c44ef42b019959641c7d6193d30629037f9b9e923",
+      "duplicate_of": null
+    },
+    {
+      "attachment": 3,
+      "file": "regional_map_03.png",
+      "width": 7161,
+      "height": 3857,
+      "bytes": 34051050,
+      "sha256": "d0eae35431409b7580eebb46a0bcb25bab57a7ed1ca9bd3a1f43fdeab683b3b3",
+      "duplicate_of": null
+    },
+    {
+      "attachment": 4,
+      "file": "farm_core_04.png",
+      "width": 1080,
+      "height": 607,
+      "bytes": 1242569,
+      "sha256": "4de7866d6bfc08cbec1a1570bbcf07ed80b7be7e849f91da6d480bb8476423e6",
+      "duplicate_of": null
+    },
+    {
+      "attachment": 5,
+      "file": "garden_paths_05.png",
+      "width": 551,
+      "height": 362,
+      "bytes": 394592,
+      "sha256": "61454c70bb9bcee4612f088949292343c45e42e937eba1d0f84432a212957ba0",
+      "duplicate_of": null
+    },
+    {
+      "attachment": 6,
+      "file": "decorated_farm_06.png",
+      "width": 900,
+      "height": 400,
+      "bytes": 893545,
+      "sha256": "2f70f519a6460f00d1587423b6ad3c49faacf3e4c782aeb2d8eb6ece0b69abdc",
+      "duplicate_of": null
+    },
+    {
+      "attachment": 7,
+      "file": "cow_shape_07.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 2503653,
+      "sha256": "6eea7d2732557261b5f37b517e2ef2e32021c603b13ce2db5f5e9eab253a4308",
+      "duplicate_of": null
+    },
+    {
+      "attachment": 8,
+      "file": "animal_lighting_08.png",
+      "width": 1920,
+      "height": 909,
+      "bytes": 2734724,
+      "sha256": "49191f43e5f9be9fd69e0b768c8c924c6f8824bc0537508a38a711c0b83cf4f6",
+      "duplicate_of": null
+    },
+    {
+      "attachment": 9,
+      "file": "cat_shape_09.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 2292520,
+      "sha256": "260025305b9a4829541fa1386e42ed4df9c138dd3e77c57ce0a478da6a942f01",
+      "duplicate_of": null
+    },
+    {
+      "attachment": 10,
+      "file": "lobster_shape_10.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 2519071,
+      "sha256": "90bda07c9501301b38090c3e07e682e6ffa759ff74f240a039553dbfab86bca9",
+      "duplicate_of": null
+    },
+    {
+      "attachment": 11,
+      "file": "decor_props_11.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 1742021,
+      "sha256": "40cadfdeb27f30ade512ac08fd40e3a7a296231f10433160ba5bc05050996931",
+      "duplicate_of": null
+    },
+    {
+      "attachment": 12,
+      "file": "chicken_shape_12.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 1587921,
+      "sha256": "0e491c04739d8f11ce9820664730595dacc7f866cdead51e32df6afbc21aacd2",
+      "duplicate_of": null
+    },
+    {
+      "attachment": 13,
+      "file": "horse_shape_13.png",
+      "width": 300,
+      "height": 360,
+      "bytes": 77884,
+      "sha256": "f19ee7608f08dce734c35f59f6be9c437b123f7db66b6ca645c68d7bd0657f76",
+      "duplicate_of": null
+    },
+    {
+      "attachment": 14,
+      "file": "horse_shape_13.png",
+      "width": 300,
+      "height": 360,
+      "bytes": 77884,
+      "sha256": "f19ee7608f08dce734c35f59f6be9c437b123f7db66b6ca645c68d7bd0657f76",
+      "duplicate_of": "horse_shape_13.png"
+    },
+    {
+      "attachment": 15,
+      "file": "horse_shape_13.png",
+      "width": 300,
+      "height": 360,
+      "bytes": 77884,
+      "sha256": "f19ee7608f08dce734c35f59f6be9c437b123f7db66b6ca645c68d7bd0657f76",
+      "duplicate_of": "horse_shape_13.png"
+    }
+  ],
+  "discovery_links": [
+    "https://www.artstation.com/search?sort_by=relevance&query=hayday",
+    "https://kr.pinterest.com/doriscoop54/hayday/"
+  ],
+  "link_status": "Web retrieval failed on 2026-09-12; no page contents or individual artist attribution verified"
+}

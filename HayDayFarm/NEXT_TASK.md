@@ -16,7 +16,7 @@ it as unproven until it builds.
 
 Current audit (2026-09-12): Windows host, Epic Launcher present, no registered
 or default-folder UE 5.x installation found. Static validation is clean on
-20 headers + 20 sources. Reference directory contains README.md only.
+20 headers + 20 sources. Reference directory now contains 13 unique PNGs, a manifest, an analysis README and RESEARCH.md.
 **First build takes priority even if reference images become available.**
 
 ### Task A — first build (user's Windows machine; cannot be done in the container)
@@ -92,21 +92,21 @@ otherwise. Useful work that remains, in order:
    with the normal validator. Missing Farm includes are now covered (KI-15); it does not yet check that `UPROPERTY` is followed
    by a declaration, or that `UCLASS` specifiers are well-formed.
 
-Do not start Phases 5–12. Do not start Phase 3 (see below).
+Do not start Phases 5–12. Phase 3 reference analysis is now possible; engine blockout follows first build.
 
 ---
 
-## Phase 3 — farm blockout: BLOCKED
+## Phase 3 — references received; engine blockout follows first build
 
-See KNOWN_ISSUES.md **KI-03**.
+KI-03's missing-reference condition is resolved as of 2026-09-12.
+Read Docs/References/README.md, manifest.json and RESEARCH.md.
+Image 4 is the primary local adjacency reference; 5/6 inform paths and planting.
+Do not reconstruct image 3 as a single farm or merge different screenshots as
+if they were a surveyed plan. No scale measurements are supplied.
 
-`Docs/References/` is empty. Phase 3 reconstructs the farm's spatial layout
-and there is nothing to reconstruct it from.
-
-**Do not invent a farm layout to unblock this.** A guessed layout is worse
-than none: it would be thrown away, and in the meantime it silently becomes
-the reference for building scale, path widths and sight lines.
-
-A session should check whether images have appeared in `Docs/References/`. If
-they have, Phase 3 is unblocked and becomes the priority after the first build — the folder's
-README lists what is most useful and why.
+After Task A passes, produce a limited core blockout (road, house/barn/silo,
+field and pens) preserving observed adjacency; mark inferred dimensions.
+Validate collision, clear walking routes and sight lines at 162 cm eye height.
+No authored level or gameplay check has happened in the reference intake.
+Hidden building faces and sunset reference remain gaps; additional search
+sources are recorded in RESEARCH.md without claiming their videos were watched.

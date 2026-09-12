@@ -49,24 +49,19 @@ and save the level as `Content/Levels/L_FarmBlockout`. That path is what
 
 ---
 
-## KI-03 — No Hay Day reference imagery; Phase 3 is blocked
+## KI-03 — Reference imagery received; exact reconstruction has remaining gaps
 
-**Status:** BLOCKED — needs the user
-**Severity:** High (blocks the largest remaining phase)
+**Status:** RESOLVED for missing references (2026-09-12)
+**Severity:** Informational
 
-`Docs/References/` is empty. Phase 3 reconstructs the farm's spatial layout,
-and there is nothing to reconstruct it from.
-
-**What is needed**, in priority order (the folder's README has detail): a
-wide shot of the whole farm, path shapes, farmhouse and barn from a couple of
-angles, animal areas with fences, the pond, and at least one sunset shot.
-
-A guessed layout was deliberately not produced. It would have to be thrown
-away, and in the meantime it would silently become the reference for building
-scale, path widths and sight lines.
-
-**Not blocked by this:** the first-build task, Phase 4 (interaction
-framework), and additional camera modes. See NEXT_TASK.md.
+15 attachments are stored as 13 unique PNGs in Docs/References with a hash
+manifest. README.md classifies inspected imagery, and RESEARCH.md records
+additional studio/artist links and their verification limits.
+A reference-backed core-area study can proceed; a complete measured farm plan,
+hidden building faces and a confirmed sunset reference are still unavailable.
+Do not assume screenshots show one continuous farm. First Unreal build remains
+blocked by KI-11 and precedes engine blockout. Reference receipt is not a
+completed Phase 3 level.
 
 ---
 
